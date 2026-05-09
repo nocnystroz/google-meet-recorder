@@ -1,5 +1,6 @@
 #!/bin/bash
 # Konfigurator nagraj-meet.sh — wykrywa urządzenia audio i zapisuje wybór.
+[ -z "$BASH_VERSION" ] && exec bash "$0" "$@"
 
 SKRYPT="$(dirname "$0")/nagraj-meet.sh"
 

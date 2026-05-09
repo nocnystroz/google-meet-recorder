@@ -1,5 +1,6 @@
 #!/bin/bash
 # Uruchom przed spotkaniem Google Meet.
+[ -z "$BASH_VERSION" ] && exec bash "$0" "$@"
 # Ctrl+C zatrzymuje nagranie i sprząta.
 #
 # Użycie: ./nagraj-meet.sh [--raw] [--no-osd] [--format wav|mp3|ogg]
