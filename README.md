@@ -105,7 +105,17 @@ Po nagraniu możesz przepuścić plik przez `normalizuj.sh` — redukuje szumy i
 
 Wynikowy plik zapisuje się obok oryginału z przyrostkiem `_norm`, np. `nagranie-meet-20260509-1900_norm.mp3`.
 
-Skrypt działa dwuprzebiegowo: najpierw analizuje poziom głośności, potem nakłada korekcję — dzięki temu wynik jest dokładniejszy niż normalizacja w locie.
+Każda operacja jest opcjonalna — wybierasz tylko to czego potrzebujesz:
+
+```bash
+./normalizuj.sh nagranie.wav --normalize                    # tylko normalizacja
+./normalizuj.sh nagranie.wav --denoise                      # tylko redukcja szumów
+./normalizuj.sh nagranie.wav --format mp3                   # tylko konwersja formatu
+./normalizuj.sh nagranie.wav --denoise --normalize          # szumy + normalizacja
+./normalizuj.sh nagranie.wav --denoise --normalize --format mp3  # wszystko + konwersja
+```
+
+Format domyślnie zostaje taki sam jak oryginał. Normalizacja działa dwuprzebiegowo (dokładniejsza niż w locie).
 
 ---
 
