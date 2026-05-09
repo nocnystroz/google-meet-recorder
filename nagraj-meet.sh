@@ -11,6 +11,8 @@
 
 MIC="alsa_input.usb-GN_Audio_A_S_Jabra_Evolve2_30_SE_B000002766B311-00.mono-fallback"
 BT_MONITOR="bluez_output.7B_9B_B9_FD_A2_1E.1.monitor"
+KATALOG=~/Nagrania-Meet
+mkdir -p "$KATALOG"
 
 # Łańcuch filtrów audio:
 #   highpass=f=80      - usuwa pomruki i niskie szumy (klimatyzacja, stoły)
@@ -38,7 +40,7 @@ case "$FORMAT" in
     *) echo "Nieznany format: $FORMAT. Użyj: wav, mp3, ogg"; exit 1 ;;
 esac
 
-PLIK=~/nagranie-meet-$(date +%Y%m%d-%H%M).$FORMAT
+PLIK="$KATALOG/nagranie-meet-$(date +%Y%m%d-%H%M).$FORMAT"
 
 # Wyświetla czas nagrywania w tytule terminala i (jeśli dostępne) na ekranie
 timer_loop() {

@@ -14,7 +14,7 @@ cd ~/geminicli_files/audio-rozkminka
 > **Ważne:** uruchamiaj przez `./nagraj-meet.sh`, nie przez `sh nagraj-meet.sh`.
 > `sh` to dash (nie bash) i nie obsługuje składni użytej w skrypcie.
 
-Plik ląduje w katalogu domowym: `~/nagranie-meet-YYYYMMDD-HHMM.wav`
+Plik ląduje w `~/Nagrania-Meet/nagranie-meet-YYYYMMDD-HHMM.wav` (folder tworzony automatycznie).
 
 ### Flagi
 
