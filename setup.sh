@@ -6,6 +6,23 @@ SKRYPT="$(dirname "$0")/nagraj-meet.sh"
 echo "=== Konfigurator nagrywania Google Meet ==="
 echo ""
 
+# --- SPRAWDZENIE ZALEŻNOŚCI ---
+BRAKUJE=0
+for DEP in pactl ffmpeg; do
+    if ! command -v "$DEP" &>/dev/null; then
+        echo "BRAK: $DEP"
+        BRAKUJE=1
+    fi
+done
+if [[ $BRAKUJE -eq 1 ]]; then
+    echo ""
+    echo "Zainstaluj brakujące pakiety:"
+    echo "  sudo apt install pulseaudio-utils ffmpeg"
+    exit 1
+fi
+echo "Zależności OK (pactl, ffmpeg)"
+echo ""
+
 # --- MIKROFONY ---
 echo "Dostępne mikrofony:"
 mapfile -t MIC_NAMES < <(pactl list short sources | grep -v '\.monitor' | awk '{print $2}')
