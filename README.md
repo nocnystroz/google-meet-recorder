@@ -1,130 +1,99 @@
 # Nagrywanie Google Meet + Mikrofon — Linux
 
-**Ten komputer:** PipeWire 1.0.5, mikrofon Jabra Evolve2 30 SE (USB), słuchawki BT, Ubuntu XFCE
+Skrypty do nagrywania spotkań Google Meet (głos + dźwięk ze spotkania) na Linuksie z PipeWire/PulseAudio.
 
-## Jak nagrywać
+## Wymagania
 
 ```bash
-cd ~/geminicli_files/audio-rozkminka
+sudo apt install ffmpeg pulseaudio-utils
+```
+
+## Szybki start
+
+```bash
+git clone https://github.com/nocnystroz/audio-rozkminka
+cd audio-rozkminka
+./setup.sh        # skonfiguruj urządzenia audio (raz)
+./nagraj-meet.sh  # nagraj spotkanie
+```
+
+---
+
+## Nagrywanie
+
+```bash
 ./nagraj-meet.sh
 ```
 
-**Ctrl+C** zatrzymuje i zapisuje plik — w tym samym terminalu, nie trzeba drugiego okna.
+**Ctrl+C** zatrzymuje i zapisuje plik w `~/Nagrania-Meet/`.
 
-> **Ważne:** uruchamiaj przez `./nagraj-meet.sh`, nie przez `sh nagraj-meet.sh`.
-> `sh` to dash (nie bash) i nie obsługuje składni użytej w skrypcie.
-
-Plik ląduje w `~/Nagrania-Meet/nagranie-meet-YYYYMMDD-HHMM.wav` (folder tworzony automatycznie).
+> Uruchamiaj przez `./nagraj-meet.sh`, nie `sh nagraj-meet.sh`.
 
 ### Flagi
 
 ```bash
-./nagraj-meet.sh                            # domyślnie: mic 2x, Meet 1x
-./nagraj-meet.sh --mic-vol 3.0              # głośniejszy mikrofon
-./nagraj-meet.sh --meet-vol 0.5            # cichszy dźwięk z Meet
-./nagraj-meet.sh --mic-vol 2.0 --meet-vol 0.7 --format mp3
+./nagraj-meet.sh                                        # mic 4x, Meet 1x, WAV
+./nagraj-meet.sh --mic-vol 3.0                         # zmniejsz wzmocnienie mikrofonu
+./nagraj-meet.sh --meet-vol 0.5                        # ścisz dźwięk ze spotkania
+./nagraj-meet.sh --mic-vol 4.0 --meet-vol 0.8 --format mp3
 ```
 
-Mikrofon domyślnie wzmocniony 4x względem dźwięku z Meet — wyrównuje typową różnicę poziomów. Dostosuj `--mic-vol` i `--meet-vol` jeśli proporcje są złe.
+| Flaga | Domyślnie | Opis |
+|---|---|---|
+| `--mic-vol N` | `4.0` | Wzmocnienie mikrofonu (1.0 = bez zmiany) |
+| `--meet-vol N` | `1.0` | Głośność dźwięku ze spotkania |
+| `--format` | `wav` | Format wyjściowy: `wav`, `mp3`, `ogg` |
 
-Podczas nagrywania widać bieżący status w terminalu:
-```
-size=    2048kB time=00:02:13.45 bitrate= 123.4kbits/s
-```
-
-Tytuł okna terminala pokazuje licznik czasu (widoczny w pasku zadań XFCE):
+Podczas nagrywania tytuł terminala pokazuje czas (widoczny w pasku zadań XFCE):
 ```
 ⏺ REC 00:23:45
 ```
 
----
-
-## Co robi skrypt
-
-1. Tworzy wirtualny mikser **MeetMix**
-2. Wrzuca do niego mikrofon + dźwięk z wyjścia audio
-3. Nagrywa przez `ffmpeg` z filtrami audio
-4. Po Ctrl+C sprząta wirtualne urządzenia
-
-Słuchawki/głośniki działają normalnie przez cały czas — słyszysz spotkanie bez zmian.
+### Schemat działania
 
 ```
-Mikrofon ──┐
-           ├──► MeetMix ──► filtry ──► nagranie-meet-*.wav
-Wyjście ───┘
-(monitor)
+Mikrofon (×4.0) ──┐
+                   ├──► ffmpeg amix ──► nagranie-meet-*.wav
+Meet audio (×1.0) ─┘
 ```
 
----
-
-## Filtry audio (domyślne)
-
-| Filtr | Co robi |
-|---|---|
-| `highpass=f=80` | Usuwa pomruki, szum klimatyzacji, dudnienia poniżej 80Hz |
-| `afftdn=nf=-25` | Redukcja szumów FFT — syk mikrofonu, szum tła |
-| `dynaudnorm=f=500:g=15` | Wyrównuje głośność uczestników |
-
-**Jeśli szumy są za duże** — otwórz skrypt i zmień `nf=-25` na `nf=-30` lub `nf=-35` w linii `FILTRY=`. Bardziej agresywna redukcja, ale może lekko "myć" głos.
+ffmpeg miksuje oba wejścia bezpośrednio — bez wirtualnych urządzeń pośrednich.
 
 ---
 
-## Przenoszenie na inny komputer
-
-Skrypt ma wpisane na sztywno nazwy urządzeń audio. Na innym sprzęcie uruchom konfigurator — sam wykryje dostępny sprzęt i zaktualizuje skrypt:
+## Konfiguracja na nowym sprzęcie
 
 ```bash
 ./setup.sh
 ```
 
-Konfigurator pokazuje numerowaną listę mikrofonów i wyjść audio, pyta o wybór, i zapisuje go do `nagraj-meet.sh`. Wymaga podłączonego sprzętu (słuchawki BT muszą być sparowane i połączone w chwili uruchamiania).
+Wykrywa dostępne mikrofony i wyjścia audio, pokazuje czytelne nazwy sprzętu, zapisuje wybór do `nagraj-meet.sh`. Wymaga podłączonego sprzętu w chwili uruchamiania.
 
 ---
 
-## Troubleshooting
-
-**Brak dźwięku z Meet w nagraniu**
-W `pavucontrol` (zakładka Odtwarzanie) sprawdź, że Chrome wysyła audio do właściwego wyjścia — loopback automatycznie przechwytuje jego monitor.
-
-**Po restarcie komputera**
-Wirtualne urządzenia są tymczasowe — uruchamiaj skrypt przed każdym spotkaniem.
-
-**Chcę edytować nagranie w Audacity**
-Audacity 3.4.2 z `apt` nie ma PulseAudio — nie można nim nagrywać z MeetMix, ale można otworzyć gotowy plik WAV do edycji. Jeśli potrzebujesz nagrywać przez Audacity: `snap install audacity` (wersja 3.7.5 ma PulseAudio).
-
----
-
-## Post-processing (opcjonalnie)
-
-Po nagraniu możesz przepuścić plik przez `normalizuj.sh` — redukuje szumy i normalizuje głośność do standardu EBU R128 (używanego w radio/TV):
+## Post-processing
 
 ```bash
-./normalizuj.sh ~/Nagrania-Meet/nagranie-meet-20260509-1900.wav
-./normalizuj.sh ~/Nagrania-Meet/nagranie-meet-20260509-1900.wav --format mp3
-./normalizuj.sh ~/Nagrania-Meet/nagranie-meet-20260509-1900.wav --format ogg
-```
-
-Wynikowy plik zapisuje się obok oryginału z przyrostkiem `_norm`, np. `nagranie-meet-20260509-1900_norm.mp3`.
-
-Każda operacja jest opcjonalna — wybierasz tylko to czego potrzebujesz:
-
-```bash
-./normalizuj.sh nagranie.wav                         # szumy + normalizacja (domyślnie)
-./normalizuj.sh nagranie.wav --format mp3            # szumy + normalizacja + konwersja
-./normalizuj.sh nagranie.wav --no-denoise            # tylko normalizacja
-./normalizuj.sh nagranie.wav --no-normalize          # tylko redukcja szumów
+./normalizuj.sh                          # wybierz plik z listy interaktywnie
+./normalizuj.sh nagranie.wav             # redukcja szumów + normalizacja EBU R128
+./normalizuj.sh nagranie.wav --format mp3
+./normalizuj.sh nagranie.wav --no-denoise
+./normalizuj.sh nagranie.wav --no-normalize
 ./normalizuj.sh nagranie.wav --format mp3 --no-denoise --no-normalize  # tylko konwersja
 ```
 
-Format domyślnie zostaje taki sam jak oryginał. Normalizacja działa dwuprzebiegowo (dokładniejsza niż w locie).
+Domyślnie stosuje redukcję szumów (`afftdn`) i normalizację głośności (EBU R128, dwuprzebiegową). Format zostaje taki sam jak oryginał jeśli nie podano `--format`. Wynik zapisywany z przyrostkiem `_out`.
 
 ---
 
 ## Pliki
-- `setup.sh` — konfigurator, uruchom raz na nowym sprzęcie
-- `nagraj-meet.sh` — uruchom przed nagraniem, Ctrl+C kończy
-- `normalizuj.sh` — post-processing: redukcja szumów + normalizacja + konwersja
-- `stop-meet.sh` — awaryjne czyszczenie gdy skrypt padł bez sprzątania (crash, `kill -9`, zamknięty terminal)
+
+| Plik | Opis |
+|---|---|
+| `setup.sh` | Konfigurator — uruchom raz na nowym sprzęcie |
+| `nagraj-meet.sh` | Nagrywanie — Ctrl+C kończy |
+| `normalizuj.sh` | Post-processing: redukcja szumów, normalizacja, konwersja |
+| `stop-meet.sh` | Awaryjne czyszczenie wirtualnych urządzeń |
 
 ---
 
