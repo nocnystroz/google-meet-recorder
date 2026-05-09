@@ -24,7 +24,6 @@ Plik ląduje w `~/Nagrania-Meet/nagranie-meet-YYYYMMDD-HHMM.wav` (folder tworzon
 ./nagraj-meet.sh --format mp3           # mały plik, dobry do odsłuchu
 ./nagraj-meet.sh --format ogg           # mały plik, otwarte kodowanie
 ./nagraj-meet.sh --raw --format mp3     # bez filtrów, jako MP3
-./nagraj-meet.sh --no-osd               # wyłącza nakładkę OSD na ekranie
 ```
 
 Podczas nagrywania widać bieżący status w terminalu:
@@ -36,12 +35,6 @@ Tytuł okna terminala pokazuje licznik czasu (widoczny w pasku zadań XFCE):
 ```
 ⏺ REC 00:23:45
 ```
-
-Nakładka OSD w prawym dolnym rogu ekranu działa po zainstalowaniu `xosd-bin`:
-```bash
-sudo apt install xosd-bin
-```
-Skrypt wykrywa ją automatycznie. Flaga `--no-osd` wyłącza nakładkę gdy jest zainstalowana.
 
 ---
 
