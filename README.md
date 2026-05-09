@@ -108,11 +108,11 @@ Wynikowy plik zapisuje się obok oryginału z przyrostkiem `_norm`, np. `nagrani
 Każda operacja jest opcjonalna — wybierasz tylko to czego potrzebujesz:
 
 ```bash
-./normalizuj.sh nagranie.wav --normalize                    # tylko normalizacja
-./normalizuj.sh nagranie.wav --denoise                      # tylko redukcja szumów
-./normalizuj.sh nagranie.wav --format mp3                   # tylko konwersja formatu
-./normalizuj.sh nagranie.wav --denoise --normalize          # szumy + normalizacja
-./normalizuj.sh nagranie.wav --denoise --normalize --format mp3  # wszystko + konwersja
+./normalizuj.sh nagranie.wav                         # szumy + normalizacja (domyślnie)
+./normalizuj.sh nagranie.wav --format mp3            # szumy + normalizacja + konwersja
+./normalizuj.sh nagranie.wav --no-denoise            # tylko normalizacja
+./normalizuj.sh nagranie.wav --no-normalize          # tylko redukcja szumów
+./normalizuj.sh nagranie.wav --format mp3 --no-denoise --no-normalize  # tylko konwersja
 ```
 
 Format domyślnie zostaje taki sam jak oryginał. Normalizacja działa dwuprzebiegowo (dokładniejsza niż w locie).

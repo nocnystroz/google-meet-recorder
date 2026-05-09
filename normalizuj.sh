@@ -5,18 +5,19 @@
 # Użycie: ./normalizuj.sh plik [opcje]
 #
 # Opcje:
-#   --denoise        redukcja szumów (highpass + afftdn)
-#   --normalize      normalizacja głośności EBU R128 (dwuprzebiegowa)
-#   --format FORMAT  konwersja do innego formatu: wav, mp3, ogg
+#   --format FORMAT    konwersja do innego formatu: wav, mp3, ogg
+#   --no-denoise       wyłącz redukcję szumów
+#   --no-normalize     wyłącz normalizację głośności
 #
-# Domyślnie: żadne przetwarzanie, format bez zmian.
+# Domyślnie: redukcja szumów + normalizacja, format bez zmian.
 # Wynikowy plik: oryginalna_nazwa_out.{format}
 #
 # Przykłady:
-#   ./normalizuj.sh nagranie.wav --normalize
-#   ./normalizuj.sh nagranie.wav --denoise --normalize
-#   ./normalizuj.sh nagranie.wav --format mp3
-#   ./normalizuj.sh nagranie.wav --denoise --normalize --format mp3
+#   ./normalizuj.sh nagranie.wav                        # szumy + normalizacja
+#   ./normalizuj.sh nagranie.wav --format mp3           # szumy + normalizacja + konwersja
+#   ./normalizuj.sh nagranie.wav --no-denoise           # tylko normalizacja
+#   ./normalizuj.sh nagranie.wav --no-normalize         # tylko redukcja szumów
+#   ./normalizuj.sh nagranie.wav --format mp3 --no-denoise --no-normalize  # tylko konwersja
 
 INPUT="$1"
 if [[ -z "$INPUT" || ! -f "$INPUT" ]]; then
@@ -26,14 +27,16 @@ fi
 shift
 
 FORMAT="${INPUT##*.}"
-DENOISE=0
-NORMALIZE=0
+DENOISE=1
+NORMALIZE=1
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --denoise)   DENOISE=1 ;;
-        --normalize) NORMALIZE=1 ;;
-        --format)    FORMAT="$2"; shift ;;
+        --denoise)      DENOISE=1 ;;
+        --normalize)    NORMALIZE=1 ;;
+        --no-denoise)   DENOISE=0 ;;
+        --no-normalize) NORMALIZE=0 ;;
+        --format)       FORMAT="$2"; shift ;;
         *) echo "Nieznana flaga: $1"; exit 1 ;;
     esac
     shift
@@ -45,8 +48,7 @@ case "$FORMAT" in
 esac
 
 if [[ $DENOISE -eq 0 && $NORMALIZE -eq 0 && "$FORMAT" == "${INPUT##*.}" ]]; then
-    echo "Nie wybrano żadnej operacji. Użyj --denoise, --normalize lub --format."
-    echo "Uruchom bez argumentów aby zobaczyć pomoc."
+    echo "Nie wybrano żadnej operacji. Użyj --format, lub wyłącz domyślne przez --no-denoise / --no-normalize."
     exit 1
 fi
 
