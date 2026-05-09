@@ -77,26 +77,13 @@ Wyjście ───┘
 
 ## Przenoszenie na inny komputer
 
-Skrypt ma wpisane na sztywno nazwy urządzeń audio tego konkretnego komputera. Na innym sprzęcie trzeba je zmienić.
+Skrypt ma wpisane na sztywno nazwy urządzeń audio. Na innym sprzęcie uruchom konfigurator — sam wykryje dostępny sprzęt i zaktualizuje skrypt:
 
-**Krok 1 — znajdź nazwę mikrofonu:**
 ```bash
-pactl list short sources | grep -v monitor
+./setup.sh
 ```
-Szukaj linii z `alsa_input` lub `bluez_source`. Skopiuj całą nazwę (pierwsza kolumna po numerze).
 
-**Krok 2 — znajdź monitor wyjścia audio:**
-```bash
-pactl list short sources | grep monitor
-```
-Szukaj monitora tego wyjścia, przez które słyszysz Meet (słuchawki, głośniki). Nazwa kończy się na `.monitor`.
-
-**Krok 3 — wklej do skryptu:**
-W `nagraj-meet.sh` zmień dwie linie na górze:
-```bash
-MIC="tutaj-nazwa-twojego-mikrofonu"
-BT_MONITOR="tutaj-nazwa-monitora-wyjscia.monitor"
-```
+Konfigurator pokazuje numerowaną listę mikrofonów i wyjść audio, pyta o wybór, i zapisuje go do `nagraj-meet.sh`. Wymaga podłączonego sprzętu (słuchawki BT muszą być sparowane i połączone w chwili uruchamiania).
 
 ---
 
@@ -114,5 +101,6 @@ Audacity 3.4.2 z `apt` nie ma PulseAudio — nie można nim nagrywać z MeetMix,
 ---
 
 ## Pliki
+- `setup.sh` — konfigurator, uruchom raz na nowym sprzęcie
 - `nagraj-meet.sh` — uruchom przed nagraniem, Ctrl+C kończy
 - `stop-meet.sh` — awaryjne czyszczenie gdy skrypt padł bez sprzątania (crash, `kill -9`, zamknięty terminal)
