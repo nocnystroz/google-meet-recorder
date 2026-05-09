@@ -25,7 +25,7 @@ Plik ląduje w `~/Nagrania-Meet/nagranie-meet-YYYYMMDD-HHMM.wav` (folder tworzon
 ./nagraj-meet.sh --mic-vol 2.0 --meet-vol 0.7 --format mp3
 ```
 
-Mikrofon domyślnie wzmocniony 2x względem dźwięku z Meet — wyrównuje typową różnicę poziomów. Dostosuj `--mic-vol` i `--meet-vol` jeśli proporcje są złe.
+Mikrofon domyślnie wzmocniony 4x względem dźwięku z Meet — wyrównuje typową różnicę poziomów. Dostosuj `--mic-vol` i `--meet-vol` jeśli proporcje są złe.
 
 Podczas nagrywania widać bieżący status w terminalu:
 ```

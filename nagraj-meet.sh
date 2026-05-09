@@ -17,7 +17,7 @@ mkdir -p "$KATALOG"
 
 # Parsowanie flag
 FORMAT="wav"
-MIC_VOL="2.0"
+MIC_VOL="4.0"
 MEET_VOL="1.0"
 while [[ $# -gt 0 ]]; do
     case "$1" in
