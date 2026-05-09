@@ -19,12 +19,13 @@ Plik ląduje w `~/Nagrania-Meet/nagranie-meet-YYYYMMDD-HHMM.wav` (folder tworzon
 ### Flagi
 
 ```bash
-./nagraj-meet.sh                        # nagrywanie czyste, format WAV
-./nagraj-meet.sh --format mp3           # nagrywanie czyste, format MP3
-./nagraj-meet.sh --format ogg           # nagrywanie czyste, format OGG
+./nagraj-meet.sh                            # domyślnie: mic 2x, Meet 1x
+./nagraj-meet.sh --mic-vol 3.0              # głośniejszy mikrofon
+./nagraj-meet.sh --meet-vol 0.5            # cichszy dźwięk z Meet
+./nagraj-meet.sh --mic-vol 2.0 --meet-vol 0.7 --format mp3
 ```
 
-Nagrywanie jest zawsze bez filtrów — filtry stosuj po nagraniu przez `normalizuj.sh`. Dzięki temu głos nie zanika a muzyka nie traci jakości.
+Mikrofon domyślnie wzmocniony 2x względem dźwięku z Meet — wyrównuje typową różnicę poziomów. Dostosuj `--mic-vol` i `--meet-vol` jeśli proporcje są złe.
 
 Podczas nagrywania widać bieżący status w terminalu:
 ```
