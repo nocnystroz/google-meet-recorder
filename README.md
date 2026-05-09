@@ -93,7 +93,24 @@ Audacity 3.4.2 z `apt` nie ma PulseAudio — nie można nim nagrywać z MeetMix,
 
 ---
 
+## Post-processing (opcjonalnie)
+
+Po nagraniu możesz przepuścić plik przez `normalizuj.sh` — redukuje szumy i normalizuje głośność do standardu EBU R128 (używanego w radio/TV):
+
+```bash
+./normalizuj.sh ~/Nagrania-Meet/nagranie-meet-20260509-1900.wav
+./normalizuj.sh ~/Nagrania-Meet/nagranie-meet-20260509-1900.wav --format mp3
+./normalizuj.sh ~/Nagrania-Meet/nagranie-meet-20260509-1900.wav --format ogg
+```
+
+Wynikowy plik zapisuje się obok oryginału z przyrostkiem `_norm`, np. `nagranie-meet-20260509-1900_norm.mp3`.
+
+Skrypt działa dwuprzebiegowo: najpierw analizuje poziom głośności, potem nakłada korekcję — dzięki temu wynik jest dokładniejszy niż normalizacja w locie.
+
+---
+
 ## Pliki
 - `setup.sh` — konfigurator, uruchom raz na nowym sprzęcie
 - `nagraj-meet.sh` — uruchom przed nagraniem, Ctrl+C kończy
+- `normalizuj.sh` — post-processing: redukcja szumów + normalizacja + konwersja
 - `stop-meet.sh` — awaryjne czyszczenie gdy skrypt padł bez sprzątania (crash, `kill -9`, zamknięty terminal)
