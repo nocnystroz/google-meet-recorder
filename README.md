@@ -1,6 +1,6 @@
 # Nagrywanie Google Meet + Mikrofon — Linux
 
-**Twój sprzęt:** PipeWire 1.0.5, mikrofon Jabra Evolve2 30 SE (USB), słuchawki BT, Ubuntu XFCE
+**Ten komputer:** PipeWire 1.0.5, mikrofon Jabra Evolve2 30 SE (USB), słuchawki BT, Ubuntu XFCE
 
 ## Jak nagrywać
 
@@ -48,16 +48,16 @@ Skrypt wykrywa ją automatycznie. Flaga `--no-osd` wyłącza nakładkę gdy jest
 ## Co robi skrypt
 
 1. Tworzy wirtualny mikser **MeetMix**
-2. Wrzuca do niego mikrofon Jabra + dźwięk ze słuchawek BT
+2. Wrzuca do niego mikrofon + dźwięk z wyjścia audio
 3. Nagrywa przez `ffmpeg` z filtrami audio
 4. Po Ctrl+C sprząta wirtualne urządzenia
 
-Słuchawki BT działają normalnie przez cały czas — słyszysz spotkanie bez zmian.
+Słuchawki/głośniki działają normalnie przez cały czas — słyszysz spotkanie bez zmian.
 
 ```
-Mikrofon Jabra ──┐
-                 ├──► MeetMix ──► filtry ──► nagranie-meet-*.wav
-BT słuchawki ────┘
+Mikrofon ──┐
+           ├──► MeetMix ──► filtry ──► nagranie-meet-*.wav
+Wyjście ───┘
 (monitor)
 ```
 
@@ -75,10 +75,35 @@ BT słuchawki ────┘
 
 ---
 
+## Przenoszenie na inny komputer
+
+Skrypt ma wpisane na sztywno nazwy urządzeń audio tego konkretnego komputera. Na innym sprzęcie trzeba je zmienić.
+
+**Krok 1 — znajdź nazwę mikrofonu:**
+```bash
+pactl list short sources | grep -v monitor
+```
+Szukaj linii z `alsa_input` lub `bluez_source`. Skopiuj całą nazwę (pierwsza kolumna po numerze).
+
+**Krok 2 — znajdź monitor wyjścia audio:**
+```bash
+pactl list short sources | grep monitor
+```
+Szukaj monitora tego wyjścia, przez które słyszysz Meet (słuchawki, głośniki). Nazwa kończy się na `.monitor`.
+
+**Krok 3 — wklej do skryptu:**
+W `nagraj-meet.sh` zmień dwie linie na górze:
+```bash
+MIC="tutaj-nazwa-twojego-mikrofonu"
+BT_MONITOR="tutaj-nazwa-monitora-wyjscia.monitor"
+```
+
+---
+
 ## Troubleshooting
 
 **Brak dźwięku z Meet w nagraniu**
-W `pavucontrol` (zakładka Odtwarzanie) sprawdź, że Chrome wysyła audio do słuchawek BT — loopback automatycznie przechwytuje ich monitor.
+W `pavucontrol` (zakładka Odtwarzanie) sprawdź, że Chrome wysyła audio do właściwego wyjścia — loopback automatycznie przechwytuje jego monitor.
 
 **Po restarcie komputera**
 Wirtualne urządzenia są tymczasowe — uruchamiaj skrypt przed każdym spotkaniem.
@@ -86,11 +111,8 @@ Wirtualne urządzenia są tymczasowe — uruchamiaj skrypt przed każdym spotkan
 **Chcę edytować nagranie w Audacity**
 Audacity 3.4.2 z `apt` nie ma PulseAudio — nie można nim nagrywać z MeetMix, ale można otworzyć gotowy plik WAV do edycji. Jeśli potrzebujesz nagrywać przez Audacity: `snap install audacity` (wersja 3.7.5 ma PulseAudio).
 
-**Chcę mniejszy plik**
-Zmień rozszerzenie pliku w skrypcie z `.wav` na `.mp3` lub `.ogg` — ffmpeg automatycznie użyje odpowiedniego kodeka.
-
 ---
 
 ## Pliki
 - `nagraj-meet.sh` — uruchom przed nagraniem, Ctrl+C kończy
-- `stop-meet.sh` — czyści urządzenia jeśli coś zostało
+- `stop-meet.sh` — awaryjne czyszczenie gdy skrypt padł bez sprzątania (crash, `kill -9`, zamknięty terminal)
