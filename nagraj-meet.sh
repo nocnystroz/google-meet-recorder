@@ -75,7 +75,8 @@ cleanup() {
     echo ""
     echo "Zatrzymuję nagranie..."
     kill "$TIMER_PID" 2>/dev/null
-    kill "$FFMPEG_PID" 2>/dev/null
+    # Nie wysyłaj sygnału do ffmpeg ponownie — Ctrl+C już to zrobiło.
+    # Czekamy aż ffmpeg dokończy zapis (trailer WAV itp.)
     wait "$FFMPEG_PID" 2>/dev/null
     pactl unload-module module-loopback 2>/dev/null
     pactl unload-module module-null-sink 2>/dev/null

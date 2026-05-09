@@ -9,7 +9,10 @@ cd ~/geminicli_files/audio-rozkminka
 ./nagraj-meet.sh
 ```
 
-**Ctrl+C** zatrzymuje i zapisuje plik.
+**Ctrl+C** zatrzymuje i zapisuje plik — w tym samym terminalu, nie trzeba drugiego okna.
+
+> **Ważne:** uruchamiaj przez `./nagraj-meet.sh`, nie przez `sh nagraj-meet.sh`.
+> `sh` to dash (nie bash) i nie obsługuje składni użytej w skrypcie.
 
 Plik ląduje w katalogu domowym: `~/nagranie-meet-YYYYMMDD-HHMM.wav`
 
