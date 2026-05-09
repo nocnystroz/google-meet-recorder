@@ -124,3 +124,7 @@ Format domyślnie zostaje taki sam jak oryginał. Normalizacja działa dwuprzebi
 - `nagraj-meet.sh` — uruchom przed nagraniem, Ctrl+C kończy
 - `normalizuj.sh` — post-processing: redukcja szumów + normalizacja + konwersja
 - `stop-meet.sh` — awaryjne czyszczenie gdy skrypt padł bez sprzątania (crash, `kill -9`, zamknięty terminal)
+
+---
+
+Jeśli skrypty Ci pomogły: [☕ Buy me a coffee](https://buymeacoffee.com/m.slawinski)
