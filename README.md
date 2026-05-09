@@ -1,100 +1,100 @@
-# Nagrywanie Google Meet + Mikrofon — Linux
+# Google Meet Recorder for Linux
 
-Skrypty do nagrywania spotkań Google Meet (głos + dźwięk ze spotkania) na Linuksie z PipeWire/PulseAudio.
+Shell scripts to record Google Meet sessions (your voice + meeting audio) on Linux with PipeWire/PulseAudio, using `ffmpeg` for mixing and post-processing.
 
-## Wymagania
+## Requirements
 
 ```bash
 sudo apt install ffmpeg pulseaudio-utils
 ```
 
-## Szybki start
+## Quick Start
 
 ```bash
-git clone https://github.com/nocnystroz/audio-rozkminka
-cd audio-rozkminka
-./setup.sh        # skonfiguruj urządzenia audio (raz)
-./nagraj-meet.sh  # nagraj spotkanie
+git clone https://github.com/nocnystroz/google-meet-recorder
+cd google-meet-recorder
+./setup.sh        # detect and configure audio devices (run once)
+./nagraj-meet.sh  # start recording
 ```
 
 ---
 
-## Nagrywanie
+## Recording
 
 ```bash
 ./nagraj-meet.sh
 ```
 
-**Ctrl+C** zatrzymuje i zapisuje plik w `~/Nagrania-Meet/`.
+Press **Ctrl+C** to stop and save. Files are saved to `~/Nagrania-Meet/`.
 
-> Uruchamiaj przez `./nagraj-meet.sh`, nie `sh nagraj-meet.sh`.
+> Always run as `./nagraj-meet.sh`, not `sh nagraj-meet.sh`.
 
-### Flagi
+### Flags
 
 ```bash
-./nagraj-meet.sh                                        # mic 4x, Meet 1x, WAV
-./nagraj-meet.sh --mic-vol 3.0                         # zmniejsz wzmocnienie mikrofonu
-./nagraj-meet.sh --meet-vol 0.5                        # ścisz dźwięk ze spotkania
+./nagraj-meet.sh                                         # mic 4x, meeting 1x, WAV
+./nagraj-meet.sh --mic-vol 3.0                          # reduce mic boost
+./nagraj-meet.sh --meet-vol 0.5                         # lower meeting audio
 ./nagraj-meet.sh --mic-vol 4.0 --meet-vol 0.8 --format mp3
 ```
 
-| Flaga | Domyślnie | Opis |
+| Flag | Default | Description |
 |---|---|---|
-| `--mic-vol N` | `4.0` | Wzmocnienie mikrofonu (1.0 = bez zmiany) |
-| `--meet-vol N` | `1.0` | Głośność dźwięku ze spotkania |
-| `--format` | `wav` | Format wyjściowy: `wav`, `mp3`, `ogg` |
+| `--mic-vol N` | `4.0` | Microphone volume multiplier (1.0 = no change) |
+| `--meet-vol N` | `1.0` | Meeting audio volume multiplier |
+| `--format` | `wav` | Output format: `wav`, `mp3`, `ogg` |
 
-Podczas nagrywania tytuł terminala pokazuje czas (widoczny w pasku zadań XFCE):
+The terminal window title shows a live recording timer visible in the taskbar:
 ```
 ⏺ REC 00:23:45
 ```
 
-### Schemat działania
+### How It Works
 
 ```
-Mikrofon (×4.0) ──┐
-                   ├──► ffmpeg amix ──► nagranie-meet-*.wav
-Meet audio (×1.0) ─┘
+Microphone (×4.0) ──┐
+                     ├──► ffmpeg amix ──► recording.wav
+Meeting audio (×1.0) ┘
 ```
 
-ffmpeg miksuje oba wejścia bezpośrednio — bez wirtualnych urządzeń pośrednich.
+ffmpeg mixes both inputs directly — no virtual audio devices needed.
 
 ---
 
-## Konfiguracja na nowym sprzęcie
+## Setup on a New Machine
 
 ```bash
 ./setup.sh
 ```
 
-Wykrywa dostępne mikrofony i wyjścia audio, pokazuje czytelne nazwy sprzętu, zapisuje wybór do `nagraj-meet.sh`. Wymaga podłączonego sprzętu w chwili uruchamiania.
+Detects available microphones and audio outputs, displays friendly device names, and saves your choice to `nagraj-meet.sh`. Make sure your headphones/speakers are connected when running setup.
 
 ---
 
 ## Post-processing
 
 ```bash
-./normalizuj.sh                          # wybierz plik z listy interaktywnie
-./normalizuj.sh nagranie.wav             # redukcja szumów + normalizacja EBU R128
-./normalizuj.sh nagranie.wav --format mp3
-./normalizuj.sh nagranie.wav --no-denoise
-./normalizuj.sh nagranie.wav --no-normalize
-./normalizuj.sh nagranie.wav --format mp3 --no-denoise --no-normalize  # tylko konwersja
+./normalizuj.sh                           # pick a file interactively
+./normalizuj.sh recording.wav             # denoise + EBU R128 normalization
+./normalizuj.sh recording.wav --format mp3
+./normalizuj.sh recording.wav --no-denoise
+./normalizuj.sh recording.wav --no-normalize
+./normalizuj.sh recording.wav --format mp3 --no-denoise --no-normalize  # convert only
 ```
 
-Domyślnie stosuje redukcję szumów (`afftdn`) i normalizację głośności (EBU R128, dwuprzebiegową). Format zostaje taki sam jak oryginał jeśli nie podano `--format`. Wynik zapisywany z przyrostkiem `_out`.
+By default applies noise reduction (`afftdn`) and loudness normalization (EBU R128, two-pass). Output format stays the same as the input unless `--format` is specified. Output file gets an `_out` suffix.
 
 ---
 
-## Pliki
+## Files
 
-| Plik | Opis |
+| File | Description |
 |---|---|
-| `setup.sh` | Konfigurator — uruchom raz na nowym sprzęcie |
-| `nagraj-meet.sh` | Nagrywanie — Ctrl+C kończy |
-| `normalizuj.sh` | Post-processing: redukcja szumów, normalizacja, konwersja |
-| `stop-meet.sh` | Awaryjne czyszczenie wirtualnych urządzeń |
+| `setup.sh` | Audio device configurator — run once per machine |
+| `nagraj-meet.sh` | Recording script — Ctrl+C to stop |
+| `normalizuj.sh` | Post-processing: noise reduction, normalization, format conversion |
+| `stop-meet.sh` | Emergency cleanup of virtual audio devices |
 
 ---
 
-Jeśli skrypty Ci pomogły: [☕ Buy me a coffee](https://buymeacoffee.com/m.slawinski)
+If these scripts helped you: [☕ Buy me a coffee](https://buymeacoffee.com/m.slawinski)
