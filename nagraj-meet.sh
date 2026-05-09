@@ -31,7 +31,7 @@ case "$FORMAT" in
     *) echo "Nieznany format: $FORMAT. Użyj: wav, mp3, ogg"; exit 1 ;;
 esac
 
-PLIK="$KATALOG/nagranie-meet-$(date +%Y%m%d-%H%M).$FORMAT"
+PLIK="$KATALOG/nagranie-meet-$(date +%Y%m%d-%H%M%S).$FORMAT"
 
 # Wyświetla czas nagrywania w tytule terminala (widoczny w pasku zadań XFCE)
 timer_loop() {
