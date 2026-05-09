@@ -3,29 +3,22 @@
 [ -z "$BASH_VERSION" ] && exec bash "$0" "$@"
 # Ctrl+C zatrzymuje nagranie i sprząta.
 #
-# Użycie: ./nagraj-meet.sh [--raw] [--format wav|mp3|ogg]
-#   --raw             nagrywa bez filtrów (surowy dźwięk)
+# Użycie: ./nagraj-meet.sh [--format wav|mp3|ogg]
 #   --format mp3      zapisuje jako MP3 (mały plik, dobry do odsłuchu)
 #   --format ogg      zapisuje jako OGG (mały plik, otwarte kodowanie)
 #   --format wav      zapisuje jako WAV (domyślny, bezstratny, do edycji)
+#
+# Nagrywanie jest zawsze czyste (bez filtrów) — użyj normalizuj.sh po nagraniu.
 
 MIC="alsa_input.usb-GN_Audio_A_S_Jabra_Evolve2_30_SE_B000002766B311-00.mono-fallback"
 BT_MONITOR="alsa_output.usb-GN_Audio_A_S_Jabra_Evolve2_30_SE_B000002766B311-00.iec958-stereo.monitor"
 KATALOG=~/Nagrania-Meet
 mkdir -p "$KATALOG"
 
-# Łańcuch filtrów audio:
-#   highpass=f=80      - usuwa pomruki i niskie szumy (klimatyzacja, stoły)
-#   afftdn=nf=-25      - redukcja szumów FFT (syk, szum tła)
-#   dynaudnorm=f=500   - wyrównuje głośność (cichy uczestnik -> głośniejszy)
-FILTRY="highpass=f=80,afftdn=nf=-25,dynaudnorm=f=500:g=15"
-
 # Parsowanie flag
 FORMAT="wav"
-RAW=0
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --raw)    RAW=1 ;;
         --format) FORMAT="$2"; shift ;;
         *) echo "Nieznana flaga: $1"; exit 1 ;;
     esac
@@ -92,19 +85,10 @@ pactl load-module module-loopback \
 echo "=== Nagrywanie ==="
 echo "Plik:   $PLIK"
 
-if [[ $RAW -eq 1 ]]; then
-    echo "Tryb:   surowy (bez filtrów)"
-else
-    echo "Tryb:   z filtrami (redukcja szumów + wyrównanie głośności)"
-fi
 echo "Ctrl+C zatrzymuje."
 echo ""
 
-if [[ $RAW -eq 1 ]]; then
-    ffmpeg -loglevel error -stats -f pulse -i MeetMix.monitor "$PLIK" &
-else
-    ffmpeg -loglevel error -stats -f pulse -i MeetMix.monitor -af "$FILTRY" "$PLIK" &
-fi
+ffmpeg -loglevel error -stats -f pulse -i MeetMix.monitor "$PLIK" &
 
 FFMPEG_PID=$!
 timer_loop &

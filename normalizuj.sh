@@ -29,7 +29,9 @@ if [[ -z "$INPUT" || ! -f "$INPUT" ]]; then
     fi
     echo "Wybierz plik do obróbki:"
     for i in "${!PLIKI[@]}"; do
-        echo "  $((i+1))) $(basename "${PLIKI[$i]}")"
+        PLIK_DATA=$(date -r "${PLIKI[$i]}" "+%d.%m.%Y %H:%M" 2>/dev/null)
+        PLIK_ROZMIAR=$(du -h "${PLIKI[$i]}" 2>/dev/null | cut -f1)
+        echo "  $((i+1))) $(basename "${PLIKI[$i]}")  [$PLIK_DATA, $PLIK_ROZMIAR]"
     done
     echo ""
     read -rp "Numer pliku: " NR

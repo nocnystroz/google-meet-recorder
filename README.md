@@ -19,12 +19,12 @@ Plik ląduje w `~/Nagrania-Meet/nagranie-meet-YYYYMMDD-HHMM.wav` (folder tworzon
 ### Flagi
 
 ```bash
-./nagraj-meet.sh                        # z filtrami, format WAV
-./nagraj-meet.sh --raw                  # bez filtrów
-./nagraj-meet.sh --format mp3           # mały plik, dobry do odsłuchu
-./nagraj-meet.sh --format ogg           # mały plik, otwarte kodowanie
-./nagraj-meet.sh --raw --format mp3     # bez filtrów, jako MP3
+./nagraj-meet.sh                        # nagrywanie czyste, format WAV
+./nagraj-meet.sh --format mp3           # nagrywanie czyste, format MP3
+./nagraj-meet.sh --format ogg           # nagrywanie czyste, format OGG
 ```
+
+Nagrywanie jest zawsze bez filtrów — filtry stosuj po nagraniu przez `normalizuj.sh`. Dzięki temu głos nie zanika a muzyka nie traci jakości.
 
 Podczas nagrywania widać bieżący status w terminalu:
 ```
