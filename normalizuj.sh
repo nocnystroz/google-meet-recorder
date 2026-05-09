@@ -21,10 +21,28 @@
 
 INPUT="$1"
 if [[ -z "$INPUT" || ! -f "$INPUT" ]]; then
-    echo "Użycie: ./normalizuj.sh plik [--denoise] [--normalize] [--format wav|mp3|ogg]"
-    exit 1
+    KATALOG=~/Nagrania-Meet
+    mapfile -t PLIKI < <(ls -t "$KATALOG"/*.{wav,mp3,ogg} 2>/dev/null)
+    if [[ ${#PLIKI[@]} -eq 0 ]]; then
+        echo "Brak nagrań w $KATALOG."
+        exit 1
+    fi
+    echo "Wybierz plik do obróbki:"
+    for i in "${!PLIKI[@]}"; do
+        echo "  $((i+1))) $(basename "${PLIKI[$i]}")"
+    done
+    echo ""
+    read -rp "Numer pliku: " NR
+    NR=$((NR - 1))
+    if [[ $NR -lt 0 || $NR -ge ${#PLIKI[@]} ]]; then
+        echo "Nieprawidłowy wybór."
+        exit 1
+    fi
+    INPUT="${PLIKI[$NR]}"
+    shift 2>/dev/null || true
+else
+    shift
 fi
-shift
 
 FORMAT="${INPUT##*.}"
 DENOISE=1
